@@ -8,6 +8,7 @@ from path import Path
 
 from dataloader_iam import DataLoaderIAM, Batch
 from model import Model, DecoderType
+from imp_model import Modal
 from preprocessor import Preprocessor
 
 
@@ -36,7 +37,7 @@ def write_summary(char_error_rates: List[float], word_accuracies: List[float]) -
         json.dump({'charErrorRates': char_error_rates, 'wordAccuracies': word_accuracies}, f)
 
 
-def train(model: Model,
+def train(modal: Modal,
           loader: DataLoaderIAM,
           line_mode: bool,
           early_stopping: int = 25) -> None:
@@ -59,11 +60,11 @@ def train(model: Model,
             iter_info = loader.get_iterator_info()
             batch = loader.get_next()
             batch = preprocessor.process_batch(batch)
-            loss = model.train_batch(batch)
+            loss = modal.train_batch(batch)
             print(f'Epoch: {epoch} Batch: {iter_info[0]}/{iter_info[1]} Loss: {loss}')
 
         # validate
-        char_error_rate, word_accuracy = validate(model, loader, line_mode)
+        char_error_rate, word_accuracy = validate(modal, loader, line_mode)
 
         # write summary
         summary_char_error_rates.append(char_error_rate)
@@ -75,7 +76,7 @@ def train(model: Model,
             print('Character error rate improved, save model')
             best_char_error_rate = char_error_rate
             no_improvement_since = 0
-            model.save()
+            modal.save()
         else:
             print(f'Character error rate not improved, best so far: {char_error_rate * 100.0}%')
             no_improvement_since += 1
@@ -86,7 +87,7 @@ def train(model: Model,
             break
 
 
-def validate(model: Model, loader: DataLoaderIAM, line_mode: bool) -> Tuple[float, float]:
+def validate(modal: Modal, loader: DataLoaderIAM, line_mode: bool) -> Tuple[float, float]:
     """Validates NN."""
     print('Validate NN')
     loader.validation_set()
@@ -100,7 +101,7 @@ def validate(model: Model, loader: DataLoaderIAM, line_mode: bool) -> Tuple[floa
         print(f'Batch: {iter_info[0]} / {iter_info[1]}')
         batch = loader.get_next()
         batch = preprocessor.process_batch(batch)
-        recognized, _ = model.infer_batch(batch)
+        recognized, _ = modal.infer_batch(batch)
 
         print('Ground truth -> Recognized')
         for i in range(len(recognized)):
@@ -119,7 +120,7 @@ def validate(model: Model, loader: DataLoaderIAM, line_mode: bool) -> Tuple[floa
     return char_error_rate, word_accuracy
 
 
-def infer(model: Model, fn_img: Path) -> None:
+def infer(modal: Modal, fn_img: Path) -> None:
     """Recognizes text in image provided by file path."""
     img = cv2.imread(fn_img, cv2.IMREAD_GRAYSCALE)
     assert img is not None
@@ -128,7 +129,7 @@ def infer(model: Model, fn_img: Path) -> None:
     img = preprocessor.process_img(img)
 
     batch = Batch([img], None, 1)
-    recognized, probability = model.infer_batch(batch, True)
+    recognized, probability = modal.infer_batch(batch, True)
     print(f'Recognized: "{recognized[0]}"')
     print(f'Probability: {probability[0]}')
 
@@ -172,16 +173,16 @@ def main():
 
         # execute training or validation
         if args.mode == 'train':
-            model = Model(char_list, decoder_type)
-            train(model, loader, line_mode=args.line_mode, early_stopping=args.early_stopping)
+            modal = Modal(char_list, decoder_type)
+            train(modal, loader, line_mode=args.line_mode, early_stopping=args.early_stopping)
         elif args.mode == 'validate':
-            model = Model(char_list, decoder_type, must_restore=True)
-            validate(model, loader, args.line_mode)
+            modal = Modal(char_list, decoder_type, must_restore=True)
+            validate(modal, loader, args.line_mode)
 
     # infer text on test image
     elif args.mode == 'infer':
-        model = Model(list(open(FilePaths.fn_char_list).read()), decoder_type, must_restore=True, dump=args.dump)
-        infer(model, args.img_file)
+        modal = Modal(list(open(FilePaths.fn_char_list).read()), decoder_type, must_restore=True, dump=args.dump)
+        infer(modal, args.img_file)
 
 
 if __name__ == '__main__':
