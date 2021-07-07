@@ -81,7 +81,7 @@ class Modal:
     def setup_tcn(self) -> None:
         """Create RNN layers."""
         tcn_in3d = tf.squeeze(self.cnn_out_4d, axis=[2])
-
+        print(tcn_in3d.shape)
         # basic cells which is used to build RNN
         num_hidden = 256
         output_size = len(self.char_list)+1
