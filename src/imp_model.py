@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 from tcn import TCN
 
+
 from dataloader_iam import Batch
 
 # Disable eager mode
@@ -17,7 +18,6 @@ class DecoderType:
     BestPath = 0
     BeamSearch = 1
     WordBeamSearch = 2
-
 
 class Modal:
     """Minimalistic TF model for HTR."""
@@ -84,13 +84,16 @@ class Modal:
 
         # basic cells which is used to build RNN
         num_hidden = 256
-        temporalCN = [TCN(input=tcn_in3d, nb_filters=num_hidden) for _ in range(2)]
-
-
+        output_size = len(self.char_list)+1
+        #temporalCN = TCN(output_size, num_channels=num_hidden)
+        temporalCN = [TCN(nb_filters=num_hidden) for _ in range(2)]
+        
         # BxTxH + BxTxH -> BxTx2H -> BxTx1X2H
         concat = tf.concat([temporalCN],2)
         
-        self.rnn_out_3d = tf.keras.layers.Dense(input=concat, output_size=len(self.char_list)+1)
+        outt = concat(tcn_in3d)
+        
+        self.rnn_out_3d = tf.keras.layers.Dense(input=outt, output_size)
 
     def setup_ctc(self) -> None:
         """Create CTC loss and decoder."""
