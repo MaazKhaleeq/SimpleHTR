@@ -90,9 +90,9 @@ class Modal:
         temp_out = temporalCN(tcn_in3d)
         
         
-        dense_layer = tf.keras.layers.Dense(units=output_size)
-        self.rnn_out_3d = dense_layer(temp_out)
-        print(self.rnn_out_3d.shape)
+        kernel = tf.Variable(tf.random.truncated_normal([1, 1, num_hidden, len(self.char_list) + 1], stddev=0.1))
+        self.rnn_out_3d = tf.squeeze(tf.nn.atrous_conv2d(value=temp_out, filters=kernel, rate=1, padding='SAME'),
+                                     axis=[2])
 
     def setup_ctc(self) -> None:
         """Create CTC loss and decoder."""
