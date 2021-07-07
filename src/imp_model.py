@@ -92,6 +92,7 @@ class Modal:
         
         dense_layer = tf.keras.layers.Dense(units=output_size)
         self.rnn_out_3d = dense_layer(temp_out)
+        print(self.rnn_out_3d.shape)
 
     def setup_ctc(self) -> None:
         """Create CTC loss and decoder."""
