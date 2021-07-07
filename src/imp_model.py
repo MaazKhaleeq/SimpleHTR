@@ -90,7 +90,7 @@ class Modal:
         
         outt = temporalCN(tcn_in3d)
         
-        self.rnn_out_3d = tf.keras.layers.Dense(input=outt, output_size=output_size)
+        self.rnn_out_3d = tf.keras.layers.Dense(input=outt, units=output_size)
 
     def setup_ctc(self) -> None:
         """Create CTC loss and decoder."""
