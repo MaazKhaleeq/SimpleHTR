@@ -86,12 +86,9 @@ class Modal:
         num_hidden = 256
         output_size = len(self.char_list)+1
         #temporalCN = TCN(output_size, num_channels=num_hidden)
-        temporalCN = [TCN(nb_filters=num_hidden) for _ in range(2)]
+        temporalCN = TCN(nb_filters=num_hidden)
         
-        # BxTxH + BxTxH -> BxTx2H -> BxTx1X2H
-        concat = tf.concat([temporalCN],2)
-        
-        outt = concat(tcn_in3d)
+        outt = temporalCN(tcn_in3d)
         
         self.rnn_out_3d = tf.keras.layers.Dense(input=outt, output_size=output_size)
 
