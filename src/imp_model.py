@@ -88,7 +88,7 @@ class Modal:
         #temporalCN = TCN(output_size, num_channels=num_hidden)
         temporalCN = TCN(nb_filters=num_hidden)
         temp_out = temporalCN(tcn_in3d)
-        
+        print(temp_out.shape)
         concat = tf.expand_dims(tf.concat([temp_out,temp_out],2),2)
         
         
