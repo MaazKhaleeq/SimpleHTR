@@ -84,7 +84,7 @@ class Modal:
 
         # basic cells which is used to build RNN
         num_hidden = 256
-        temporalCN = [TCN(inputs=tcn_in3d, nb_filters=num_hidden) for _ in range(2)]
+        temporalCN = [TCN(input=tcn_in3d, nb_filters=num_hidden) for _ in range(2)]
 
 
         # BxTxH + BxTxH -> BxTx2H -> BxTx1X2H
