@@ -93,13 +93,13 @@ class Modal:
         
         
         kernel = tf.Variable(tf.random.truncated_normal([1, 1, num_hidden, len(self.char_list) + 1], stddev=0.1))
-        self.rnn_out_3d = tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'),
+        self.tcn_out_3d = tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'),
                                      axis=[2])
 
     def setup_ctc(self) -> None:
         """Create CTC loss and decoder."""
         # BxTxC -> TxBxC
-        self.ctc_in_3d_tbc = tf.transpose(a=self.rnn_out_3d, perm=[1, 0, 2])
+        self.ctc_in_3d_tbc = tf.transpose(a=self.tcn_out_3d, perm=[1, 0, 2])
         # ground truth text as sparse tensor
         self.gt_texts = tf.SparseTensor(tf.compat.v1.placeholder(tf.int64, shape=[None, 2]),
                                         tf.compat.v1.placeholder(tf.int32, [None]),
