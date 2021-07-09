@@ -44,10 +44,11 @@ def processimage():
         file.save(b)
         img = Image.open(b).convert('L')
         
-        enc_img = base64.b64encode(img)
         
         img = np.array(img)
         processedimg = prep.process_img(img)
+        enc_img = base64.b64encode(processedimg)
+
         r = requests.post('http://127.0.0.1:5001/infer',json={'img':enc_img,'shape':processedimg.shape})
         return r.text
     return
