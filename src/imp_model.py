@@ -90,10 +90,10 @@ class Modal:
         temporalCN1 = TCN(nb_filters=num_hidden, return_sequences=True, padding='same')
         temporalCN2 = TCN(nb_filters=num_hidden, return_sequences=True, padding='same')
         
-        tempCN = tf.keras.layers.concatenate([temporalCN1, temporalCN2])
-        temp_out = tempCN(tcn_in3d)
+        temp_out1 = temporalCN1(tcn_in3d)
+        temp_out2 = temporalCN2(tcn_in3d)
         
-        concat = tf.expand_dims(temp_out,2)
+        concat = tf.expand_dims(tf.concat([temp_out1, temp_out2], 2), 2)
         
         
         kernel = tf.Variable(tf.random.truncated_normal([1, 1, num_hidden, len(self.char_list) + 1], stddev=0.1))
