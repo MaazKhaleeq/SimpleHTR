@@ -82,11 +82,12 @@ class Modal:
         """Create RNN layers."""
         tcn_in3d = tf.squeeze(self.cnn_out_4d, axis=[2])
 
-        # basic cells which is used to build RNN
         num_hidden = 256
         output_size = len(self.char_list)+1
 
-        #temporalCN = TCN(nb_filters=num_hidden, return_sequences=True, padding='same')
+        #using keras library TCN
+        #2 different TCN used to learn different features just like LSTM
+        #same padding used instead of causal to include future values like in bi-directional RNN
         temporalCN1 = TCN(nb_filters=num_hidden, return_sequences=True, padding='same')
         temporalCN2 = TCN(nb_filters=num_hidden, return_sequences=True, padding='same')
         
