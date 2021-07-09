@@ -86,7 +86,7 @@ class Modal:
         num_hidden = 256
         output_size = len(self.char_list)+1
         #temporalCN = TCN(output_size, num_channels=num_hidden)
-        temporalCN = TCN(nb_filters=num_hidden, return_sequences=True)
+        temporalCN = TCN(nb_filters=num_hidden, return_sequences=True, padding='same')
         temp_out = temporalCN(tcn_in3d)
 
         concat = tf.expand_dims(temp_out,2)
