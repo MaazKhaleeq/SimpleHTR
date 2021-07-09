@@ -48,7 +48,7 @@ def processimage():
         
         img = np.array(img)
         processedimg = prep.process_img(img)
-        r = requests.post('http://infer:5001/infer',json={'img':enc_img,'shape':processedimg.shape})
+        r = requests.post('http://127.0.0.1:5001/infer',json={'img':enc_img,'shape':processedimg.shape})
         return r.text
     return
 if __name__ == "__main__":
