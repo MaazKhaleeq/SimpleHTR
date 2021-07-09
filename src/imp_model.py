@@ -95,7 +95,6 @@ class Modal:
         
         concat = tf.expand_dims(tf.concat([temp_out1, temp_out2], 2), 2)
         
-        print(concat.shape)
         kernel = tf.Variable(tf.random.truncated_normal([1, 1, num_hidden*2, len(self.char_list) + 1], stddev=0.1))
         self.tcn_out_3d = tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'),
                                      axis=[2])
